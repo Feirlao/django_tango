@@ -29,6 +29,9 @@ ALLOWED_HOSTS = []
 
 TEMPLATE_DIR=os.path.join(BASE_DIR,'templates')
 STATIC_DIR=os.path.join(BASE_DIR,'static')
+MEDIA_DIR=os.path.join(BASE_DIR,'media')
+MEDIA_ROOT=MEDIA_DIR
+MEDIA_URL='/media/'
 # Application definition
 
 INSTALLED_APPS = [
@@ -53,6 +56,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'django_tango.urls'
 STATICFILES_DIRS=[STATIC_DIR,]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -64,6 +68,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },

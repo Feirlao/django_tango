@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<% load staticfiles %}
+{% load staticfiles %}
 <html>
    <head>
        <title>Rango</title>
@@ -12,7 +12,8 @@
        </div>
        <div>
            <a href="/rango/about/">About</a>
-           <img src= "/static/images/timg.jpeg" alt="picture of gold" />
+           <img src= "{% static "images/timg.jpeg" %}" alt="picture of gold" />
        </div>
+
    </body>
 </html>
