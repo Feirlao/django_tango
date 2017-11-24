@@ -25,9 +25,9 @@ def populate():
         {"title": "part three", "url": "http://the.djangothirdparit.org/","views":32},
     ]
 
-    cats = {"Python": {"pages": python_pages, "views": 128, "likes": 64},
-            "Django": {"pages": django_pages, "views": 64, "likes": 32},
-            "Other Frameworks": {"pages": other_pages, "views": 32, "likes": 16}}
+    cats = {"python": {"pages": python_pages, "views": 128, "likes": 64},
+            "django": {"pages": django_pages, "views": 64, "likes": 32},
+            "other Frameworks": {"pages": other_pages, "views": 32, "likes": 16}}
     for cat,cat_data in cats.items():
         c=add_cat(cat,cat_data["views"],cat_data["likes"])
         for p in cat_data["pages"]:

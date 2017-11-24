@@ -27,13 +27,18 @@
 	        {% else %}
 	            <strong>There are no categories present.</strong>
 	        {% endif %}
+
 	        </div>
+        <div>
+           <a href="/rango/add_category/">Add a New Category</a>
+       </div>
        <div>
            <a href="/rango/">About</a>
-           <img src= "{% static "images/timg.jpeg" %}" alt="picture of gold" />
+           <li>
+               <img src= "{% static "images/timg.jpeg" %}" alt="picture of gold" />
+           </li>
+
        </div>
-       <div>
-           <a href="/rango/add_category/">Add a New Category</a><br />
-       </div>
+
    </body>
 </html>
