@@ -1,15 +1,38 @@
 from django.shortcuts import render
 from rango.models import Category,Page
-from rango.forms import CategoryForm,PageFarm
+from rango.forms import CategoryForm,PageFarm,UserForm,UserProfileForm
 from django import forms
+from django.contrib.auth import authenticate,login,logout
+from django.urls import reverse
 # Create your views here.
-from django.http import HttpResponse
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
+from datetime import datetime
 def index(request):
+
     category_list=Category.objects.order_by('-likes')[:10]
-    print(category_list)
-    context_dict={'categories':category_list}
-    return render(request,'rango/index.html',context=context_dict)
+    page_list = Page.objects.order_by('-views')[:5]
+    context_dict={'categories':category_list,'pages':page_list}
+
+    visitor_cookie_handler(request)
+
+    context_dict['visits']=request.session['visits']
+    print(request.session['visits'])
+    response = render(request, 'rango/index.html', context=context_dict)
+    return response
+
+
+
+
+def about(request):
+    if request.session.test_cookie_worked():
+        print("TEST COOKIE WORKED!")
+        request.session.delete_test_cookie()
+
+    print(request.method)
+    print(request.user)
+    return render(request,'rango/about.html',{})
 
 def show_category(request,category_name_slug):
     context_dict={}
@@ -51,6 +74,7 @@ def add_page(request,category_name_slug):
                 page=form.save(commit=False)
                 page.category=category
                 page.views=0
+                page.likes=0
                 page.save()
                 return show_category(request,category)
 
@@ -59,6 +83,101 @@ def add_page(request,category_name_slug):
 
     context_dict={'form':form,'category':category}
     return render(request,'rango/add_page.html',context_dict)
+
+
+def register(request):
+    registered=False
+    if request.method=='POST':
+        user_form=UserForm(data=request.POST)
+        profile_form=UserProfileForm(data=request.POST)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user=user_form.save()
+            user.set_password(user.password)
+            user.save()
+            profile=profile_form.save(commit=False)
+            profile.user=user
+
+            if 'picture' in request.FILES:
+                profile.picture=request.FILES['picture']
+
+                profile.save()
+
+                registered=True
+            else:
+                print(user_form.errors,profile_form.errors)
+    else:
+            user_form=UserForm()
+            profile_form=UserProfileForm()
+
+    return render(request,'rango/register.html',{'user_form':user_form,
+        'profile_form':profile_form,'registered':registered})
+
+
+
+def user_login(request):
+    if request.method=='POST':
+        username=request.POST.get('username')
+        password=request.POST.get('password')
+        user=authenticate(username=username,password=password)
+        if user:
+            if user.is_active:
+                login(request,user)
+                return HttpResponseRedirect(reverse('index'))
+            else:
+                return HttpResponse('your rango account is disabled')
+
+        else:
+            print('invalid login details:{0},{1}'.format(username,password))
+        return HttpResponse('invalid login details supplied')
+    else:
+        return render(request,'rango/login.html',{})
+
+
+
+def some_view(request):
+    if not request.user.is_authenticated():
+        return HttpResponse('You are logged in.')
+    else:
+        return HttpResponse('You are not logged in ')
+
+
+@login_required
+def restricted(request):
+    return HttpResponse('SINCE you are logged in,you can see this text!')
+
+
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('index'))
+
+
+
+def get_server_side_cookie(request,cookie,default_val=None):
+    val=request.session.get(cookie)
+    if not val:
+        val=default_val
+    return val
+
+
+def visitor_cookie_handler(request):
+    visits=int(request.COOKIES.get('visits','1'))
+
+    last_vist_cookie=get_server_side_cookie(request,'last_visit',str(datetime.now()))
+    last_vist_time=datetime.strptime(last_vist_cookie[:-7],'%Y-%m-%d %H:%M:%S')
+
+    if (datetime.now() - last_vist_time).days >1 :
+        visits=visits+1
+        request.session['last_visit']=str(datetime.now())
+
+    else:
+        vists=1
+
+        request.session['last_visit']=last_vist_cookie
+        request.session['visits']=visits
+
+
 
 
 

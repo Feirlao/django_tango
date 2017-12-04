@@ -1,0 +1,22 @@
+
+{% load staticfiles %}
+<html>
+ <body>
+    <h1>About Page</h1>
+    {% if registered %}
+        Rango : <strong> thank you for registering!</strong>
+        <a href="{% url 'index.html' %}" > Return to homepage </a><br />
+    {% else %}
+        Rango: <strong>register here!</strong>
+        <form id="user_form" method="post" action="{% url 'register' %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ user_form.as_p }}
+            {{ profile_form.as_p }}
+            <input type="submit" name="submit" value="Register">
+        </form>
+    {% endif %}
+ </body>
+</html>
+
+
+

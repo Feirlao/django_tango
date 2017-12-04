@@ -1,5 +1,7 @@
 from django.apps import AppConfig
 
-
-class RangoConfig(AppConfig):
+class MyAppConfig(AppConfig):
     name = 'rango'
+
+    def ready(self):
+        from . import signals
