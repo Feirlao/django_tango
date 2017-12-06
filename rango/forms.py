@@ -32,8 +32,12 @@ class PageFarm(forms.ModelForm):
 
 class UserForm(forms.ModelForm):
     password=forms.CharField(widget=forms.PasswordInput())
+    username = forms.CharField(
+        help_text=False
+                               )
     class Meta:
         model=User
+
         fields=('username','email','password')
 
 class UserProfileForm(forms.ModelForm):

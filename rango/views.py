@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse,HttpResponseRedirect
 from django.shortcuts import render
 from datetime import datetime
+
 def index(request):
 
     category_list=Category.objects.order_by('-likes')[:10]
@@ -140,7 +141,11 @@ def some_view(request):
         return HttpResponse('You are logged in.')
     else:
         return HttpResponse('You are not logged in ')
+from registration.backends.simple.views import RegistrationView
+class MyRegistrationView(RegistrationView):
 
+    def get_success_url(self, user):
+        return ('/rango/')
 
 @login_required
 def restricted(request):

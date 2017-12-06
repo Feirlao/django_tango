@@ -1,13 +1,8 @@
 {% extends 'rango/base.html' %}
 	{% load staticfiles %}
-	{% block title_block %}
-		Index
-	{% endblock %}
-
 	{% block body_block %}
-
 	<div class="jumbotron">
-		<h1 class="display-3">Rango says...</h1>
+		<h1 class="display-3">Rango </h1>
 		{% if user.is_authenticated %}
 			<p class="lead">hey there {{ user.username }}</p>
 		{% else %}
